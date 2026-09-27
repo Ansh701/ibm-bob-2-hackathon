@@ -24,11 +24,7 @@ The local experience is intentionally labelled as a synthetic fixture. It does n
 
 ## Product preview
 
-![INSIPS public landing page](docs/screenshots/redesign/landing-desktop-full.png)
-
-![INSIPS organization workspace in dark mode](docs/screenshots/redesign/organization-dashboard-dark.png)
-
-![INSIPS sign-in experience](docs/screenshots/redesign/sign-in-desktop.png)
+![INSIPS project cover](docs/assets/insips-github-cover.png)
 
 ## Route inventory
 
