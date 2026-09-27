@@ -2,7 +2,7 @@
 
 INSIPS turns private evidence into specific, explainable trust signals for social-impact organizations. INSIPS Compass assists with extraction and candidate preparation; organizations confirm their own facts; independent platform reviewers decide each claim; and the public sees only current approvals with a meaning and review date.
 
-This repository is a new hackathon implementation for WeMakeDevs x AWS First Commit. All people, organizations, documents, addresses, identifiers, review decisions, and activity shown in the demo are synthetic.
+This repository is the INSIPS submission for the IBM Bob 2.0 Hackathon. All people, organizations, documents, addresses, identifiers, review decisions, and activity shown in the demo are synthetic.
 
 ## What works locally
 
@@ -17,6 +17,8 @@ This repository is a new hackathon implementation for WeMakeDevs x AWS First Com
 - Light and dark themes, keyboard-visible focus, reduced-motion support, mobile workspace navigation, intentional empty states, and safe fixture labelling.
 - Strict schemas, document and claim state transitions, deny-by-default role/tenant policy, and tests for the highest-risk publication rules.
 - AWS CDK for Cognito, HTTP API/Lambda, DynamoDB, private S3, conditional GuardDuty Malware Protection, EventBridge, Step Functions, Textract, Bedrock, CloudWatch, and a conditional AWS Budget.
+
+The current production preview is available at [main.d1pi8v4nifv0bv.amplifyapp.com](https://main.d1pi8v4nifv0bv.amplifyapp.com/). The deployed API health endpoint is [h3776pj94e.execute-api.ap-south-1.amazonaws.com/health](https://h3776pj94e.execute-api.ap-south-1.amazonaws.com/health).
 
 The local experience is intentionally labelled as a synthetic fixture. It does not claim that GuardDuty, Textract, Bedrock, Cognito, PostgreSQL, DynamoDB, or Razorpay ran locally.
 
@@ -111,16 +113,11 @@ The contracts suite covers tenant isolation, suspended membership denial, self-a
 
 The DynamoDB access patterns and key design are recorded in `docs/DYNAMODB.md`; keys were derived from those access patterns rather than guessed from screens. `docs/OPERATIONS.md` is the CloudWatch-safe troubleshooting runbook.
 
-## AWS setup and deployment gate
+## AWS deployment
 
-Do not deploy until all four manual inputs are resolved:
+The current AWS deployment uses the existing `Insips-dev` stack in `ap-south-1` and Amplify Hosting for Next.js SSR. The stack is managed manually from an authenticated AWS CLI profile; no CI/CD workflow, worker, or always-on server is required by this repository.
 
-1. Chosen AWS region with Cognito, GuardDuty Malware Protection for S3, Textract, and a suitable Bedrock text model verified.
-2. Named AWS SSO/CLI profile authenticated locally. Never paste credentials into chat or a file.
-3. Approved monthly budget and notification email.
-4. Approval to enable cost-bearing GuardDuty, Textract, and Bedrock resources.
-
-After approval:
+For a new environment, authenticate without placing credentials in source files and deploy the infrastructure with explicit cost and feature parameters:
 
 ```bash
 aws sso login --profile YOUR_PROFILE
@@ -133,9 +130,9 @@ pnpm --filter @insips/infra deploy -- --profile YOUR_PROFILE \
   --parameters BudgetEmail=APPROVED_EMAIL
 ```
 
-The deployment intentionally defaults malware protection off and the budget amount to zero. That makes unresolved cost decisions visible instead of silently enabling a paid workflow. `docs/COSTS.md` contains the service-by-service model and shutdown procedure.
+The deployment intentionally defaults malware protection off and the budget amount to zero. That makes unresolved cost decisions visible instead of silently enabling a paid workflow. `docs/COSTS.md` contains the service-by-service model and shutdown procedure. Live Cognito federation and Razorpay transactions require their provider configuration and should be smoke-tested separately before being described as live capabilities.
 
-Amplify Hosting should be connected to the authorized public GitHub repository using `amplify.yml`. Current AWS documentation supports managed Next.js SSR through Next.js 15, so this project pins Next.js 15 with React 19; see `docs/DECISIONS.md`.
+Amplify Hosting is connected to the public GitHub repository using `amplify.yml`. This project pins Next.js 15 with React 19 for managed SSR; see `docs/DECISIONS.md`.
 
 ## Demo data and reset
 
@@ -149,10 +146,10 @@ Reset the browser demo by deleting the `insips-demo-v1` local-storage item or cl
 
 ## Current limitations
 
-- AWS and Razorpay are not deployed because region, profile, spending ceiling, provider credentials, budget email, and paid-service approval are unresolved.
+- The production preview and API health endpoint are deployed, but live Cognito federation and Razorpay payment flows remain configuration-dependent and are not represented as completed live transactions.
 - Cognito is the only production identity provider. Local development uses an explicit test adapter; federation appears only when credentials are configured.
 - Aurora PostgreSQL and its schema migration are synthesized but not deployed. DynamoDB remains limited to the existing evidence-processing state.
-- The Next.js BFF/domain API connection, live presigned upload endpoint, durable review writes, and Amplify deployment remain release work after cloud authorization.
+- The Next.js BFF/domain API connection, live presigned upload endpoint, and durable review writes remain release work beyond the current deployment preview.
 - The user-supplied pre-existing INSIPS logo is included at the owner's explicit direction; broader redistribution terms remain the owner's responsibility.
 - The synthetic pipeline UI demonstrates the intended states; it never labels fixture data as a live AWS result.
 
@@ -168,4 +165,4 @@ The evidence bucket has deletion protection through retained objects: `autoDelet
 
 ## Hackathon disclosure
 
-OpenAI Codex assisted with implementation, tests, documentation, and review. Product decisions and submission claims require human verification. Pre-existing concept and screenshot references were used only for planning and visual direction. See `CREDITS.md` for libraries, licences, and asset status.
+Product decisions and submission claims require human verification. Pre-existing concept and screenshot references were used only for planning and visual direction. See `CREDITS.md` for libraries, licences, and asset status.
